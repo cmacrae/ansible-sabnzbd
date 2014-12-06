@@ -1,0 +1,28 @@
+---
+# SABnzbd user/group properties
+sabnzbd_user_name: sabnzbd
+sabnzbd_group_name: sabnzbd
+sabnzbd_user_uid: 1000
+sabnzbd_group_gid: 1000
+sabnzbd_user_home: /opt/{{ sabnzbd_user_name }}
+
+# SABnzbd paths
+sabnzbd_conf_path: "{{ sabnzbd_user_home }}/.sabnzbd"
+sabnzbd_library_path: "{{ sabnzbd_user_home}}/data" # set this as the path in SABnzbd  for your downloads
+sabnzbd_binary_path: "{{ sabnzbd_user_home }}/bin/SABnzbd"
+
+# SABnzbd service properties
+sabnzbd_ip: 0.0.0.0
+sabnzbd_port: 8080
+sabnzbd_pid_file: "{{ sabnzbd_conf_path }}/sabnzbd-{{ sabnzbd_port }}.pid"
+sabnzbd_path_var: /opt/local/bin:/opt/local/sbin:/usr/bin:/bin
+sabnzbd_service_args: >-
+  -f $SAB_DIR/settings.ini
+  -b 0 -d --pidfile $SAB_PID
+  -s $SAB_ADDR
+
+# SABnzbd download properties
+sabnzbd_source_from_git: False
+sabnzbd_follow_git: no # Follow Git development? (yes/no)
+sabnzbd_source_url: http://netcologne.dl.sourceforge.net/project/sabnzbdplus/sabnzbdplus/0.7.20/SABnzbd-0.7.20-src.tar.gz
+sabnzbd_source_sha256sum: 20b3a4613a0ecdede4fdfeb628ae806e458ac1a6fb684306328dd4ed1faf8742
