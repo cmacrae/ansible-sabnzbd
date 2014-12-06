@@ -25,7 +25,8 @@ The current version includes the following variables:
 | sabnzbd_ip | 0.0.0.0 | IP address the SABnzbd service will listen on |
 | sabnzbd_port | 8080 | tcp port the SABnzbd web interface will bind to |
 | sabnzbd_pid_file | {{ sabnzbd_conf_path }}/sabnzbd-{{ sabnzbd_port }}.pid | pidfile for the SABnzbd service to write the pid to |
-| sabnzbd_service_args | -f $SAB_DIR/settings.ini<br> -b 0 -d --pidfile $SAB_PID<br> -s $SAB_ADDR | arguments the SABnzbd service will use when starting |
+| sabnzbd_path_var | /opt/local/bin:/opt/local/sbin:/usr/bin:/bin | set $PATH for the SABnzbd service script |
+| sabnzbd_service_args | -f {{ sabnzbd_conf_path }}/settings.ini<br> -b 0 -d --pidfile {{ sabnzbd_pid_file }}<br> -s {{ sabnzbd_ip }}:{{ sabnzbd_port }} | arguments the SABnzbd service will use when starting |
 | sabnzbd_source_from_git | False | set to True to grab SABnzbd from Git, rather than a tarball from their site |
 | sabnzbd_follow_git | no | ensure SABnzbd source follows HEAD from Git |
 | sabnzbd_source_url | (link to SABnzbd source tarball, 0.7.20) | set the source URL for the SABnzbd tarball |
