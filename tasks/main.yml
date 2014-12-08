@@ -13,6 +13,11 @@
           createhome=yes
           state=present
 
+  - name: Ensure SABnzbd service user environment is set up
+    shell: cp /etc/skel/{.bash*,.login,.profile} {{ sabnzbd_user_home }}/
+    args:
+      creates: "{{ sabnzbd_user_home }}/.bashrc"
+
   - name: Ensure SABnzbd dependencies are installed
     pkgin: name={{ item }} state=present
     with_items:
