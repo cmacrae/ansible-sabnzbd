@@ -23,14 +23,19 @@
     with_items:
       - git-base
       - par2
+      - py27-pip
       - py27-cheetah
-      - py27-configobj
       - py27-feedparser
       - py27-OpenSSL
       - py27-sqlite3
       - unrar
       - unzip
       - yencode
+
+  - name: Ensure SABnzbd dependencies are installed via pip
+    pip: name={{ item }} state=present
+    with_items:
+      - configobj
 
   - name: Ensure SABnzbd binary directory exists
     file: dest={{ sabnzbd_user_home }}/bin
