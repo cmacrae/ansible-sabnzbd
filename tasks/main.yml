@@ -1,105 +1,60 @@
 ---
 
   - name: Ensure SABnzbd service group is present
-    group: name={{ sabnzbd_group_name }}
-           gid={{ sabnzbd_group_gid }}
-           state=present
+    group:
+      name: "{{ sabnzbd_group_name }}"
+      gid: "{{ sabnzbd_group_gid }}"
+      system: true
+      state: present
            
   - name: Ensure SABnzbd service user is present
-    user: name={{ sabnzbd_user_name }}
-          uid={{ sabnzbd_user_uid }}
-          group={{ sabnzbd_group_name }}
-          home={{ sabnzbd_user_home }}
-          createhome=yes
-          state=present
-
-  - name: Ensure SABnzbd service user environment is set up
-    shell: cp /etc/skel/{.bash*,.login,.profile} {{ sabnzbd_user_home }}/
-    args:
-      creates: "{{ sabnzbd_user_home }}/.bashrc"
+    user:
+      name: "{{ sabnzbd_user_name }}"
+      uid: "{{ sabnzbd_user_uid }}"
+      group: "{{ sabnzbd_group_name }}"
+      home: "{{ sabnzbd_user_home }}"
+      system: true
+      state: present
 
   - name: Ensure SABnzbd dependencies are installed
-    pkgin: name={{ item }} state=present
-    with_items:
-      - git-base
-      - par2
-      - py27-cheetah
-      - py27-configobj
-      - py27-feedparser
-      - py27-OpenSSL
-      - py27-sqlite3
-      - unrar
-      - unzip
-      - yencode
+    package: name={{ sabnzbd_dependencies }} state=present
 
-  - name: Ensure SABnzbd binary directory exists
-    file: dest={{ sabnzbd_user_home }}/bin
-          owner={{ sabnzbd_user_name }}
-          group={{ sabnzbd_group_name }}
-          recurse=yes state=directory
+  - name: Ensure SABnzbd source directory exists
+    file:
+      dest: "{{ sabnzbd_user_home }}/src"
+      owner: "{{ sabnzbd_user_name }}"
+      group: "{{ sabnzbd_group_name }}"
+      recurse: true
+      state: directory
 
   - name: Ensure SABnzbd library directory exists
-    file: dest={{ sabnzbd_library_path }}
-          owner={{ sabnzbd_user_name }}
-          group={{ sabnzbd_group_name }}
-          state=directory
+    file:
+      dest: "{{ sabnzbd_library_path }}"
+      owner: "{{ sabnzbd_user_name }}"
+      group: "{{ sabnzbd_group_name }}"
+      state: directory
 
-  - name: Ensure SABnzbd config directory exists
-    file: dest={{ sabnzbd_conf_path }}
-          owner={{ sabnzbd_user_name }}
-          group={{ sabnzbd_group_name }}
-          recurse=yes state=directory
+  - name: Fetch SABnzbd source code
+    git:
+      repo: "{{ sabnzbd_clone_uri }}"
+      dest: "{{ sabnzbd_user_home }}/src"
+      update: "{{ sabnzbd_follow_git }}"
+    notify: Restart SABnzbd service
+    become: true
+    become_user: "{{ sabnzbd_user_name }}"
 
-  - name: Fetch SABnzbd from GitHub
-    git: repo=git://github.com/sabnzbd/sabnzbd
-         dest={{ sabnzbd_binary_path }}
-         update={{ sabnzbd_follow_git }}
-    when: sabnzbd_source_from_git 
-
-  - name: Fetch SABnzbd
-    get_url: dest=/tmp/sabnzbd.tar.gz
-             url={{ sabnzbd_source_url }}
-             sha256sum={{ sabnzbd_source_sha256sum }}
-    when: not sabnzbd_source_from_git
-
-  - name: Untar SABnzbd
-    unarchive: copy=no
-               src=/tmp/sabnzbd.tar.gz
-               dest={{ sabnzbd_user_home }}/bin
-               owner={{ sabnzbd_user_name }}
-               group={{ sabnzbd_group_name }}
-               creates={{ sabnzbd_binary_path }}/SABnzbd.py
-    when: not sabnzbd_source_from_git
-
-  - name: Strip version number from SABnzbd binary directory
-    shell: mv {{ sabnzbd_user_home }}/bin/SABnzbd* {{ sabnzbd_binary_path }}
-    args:
-      creates: "{{ sabnzbd_binary_path }}/SABnzbd.py"
-    when: not sabnzbd_source_from_git
-
-  - name: Set shebang for SABnzbd.py to use /usr/bin/env
-    lineinfile: dest={{ sabnzbd_binary_path }}/SABnzbd.py
-                regexp='#!\/usr\/bin\/python \-OO'
-                line='#!/usr/bin/env python -OO'
-                backrefs=yes
-                state=present
-
-  - name: Deploy SABnzbd service script
-    template: dest=/opt/local/lib/svc/method/sabnzbd
-              src=sabnzbd.smartos_service.j2
-              owner=root group=root mode=755
-    notify: restart sabnzbd
-              
   - name: Deploy SABnzbd service manifest
-    template: dest=/opt/local/lib/svc/manifest/sabnzbd.xml
-              src=sabnzbd.smartos_smf_manifest.xml.j2
-              owner=root group=root mode=644
-    notify: import sabnzbd service
+    template:
+      dest: "{{ sabnzbd_service_file.dest }}"
+      src: "{{ sabnzbd_service_file.src }}"
+      owner: root
+      group: root
+      mode: 0600
+    notify:
+      - Reload SABnzbd service config
+      - Restart SABnzbd service
 
-  - name: Initial import of SABnzbd service
-    command: /usr/sbin/svccfg import /opt/local/lib/svc/manifest/sabnzbd.xml
-    args:
-      creates: "/var/svc/log/application-sabnzbd:default.log"
+  - meta: flush_handlers
 
   - name: Ensure SABnzbd service is running and enabled on boot
     service: name=sabnzbd state=started enabled=yes

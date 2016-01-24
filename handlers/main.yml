@@ -1,7 +1,7 @@
 ---
 
-- name: restart sabnzbd
+- name: Restart SABnzbd service
   service: name=sabnzbd state=restarted
 
-- name: import sabnzbd service
-  command: /usr/sbin/svccfg import /opt/local/lib/svc/manifest/sabnzbd.xml
+- name: Reload SABnzbd service config
+  command: "{{ sabnzbd_service_reload_command }}"

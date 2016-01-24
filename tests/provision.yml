@@ -1,0 +1,7 @@
+---
+
+  - name: Apply the cmacrae.couchpotato role to all sab_servers
+    hosts: sab_servers
+
+    roles:
+      - ../../cmacrae.sabnzbd

@@ -14,23 +14,30 @@ The current version includes the following variables:
 
 | Name               | Default Value | Description                  |
 |--------------------|---------------|------------------------------|
-| sabnzbd_user_name  | sabnzbd | username to run the SABnzbd service |
-| sabnzbd_group_name | sabnzbd | groupname to run the SABnzbd service |
-| sabnzbd_user_uid | 1000 | UID of the SABnzbd service user |
-| sabnzbd_group_gid | 1000 | GID of the SABnzbd service group |
-| sabnzbd_user_home | /opt/{{ sabnzbd_user_name }} | home directory for the SABnzbd service user |
-| sabnzbd_conf_path | {{ sabnzbd_user_home }}/.sabnzbd | configuration directory for the SABnzbd service |
-| sabnzbd_library_path | {{ sabnzbd_user_home }}/data | root library path, to be used for download directories, etc. |
-| sabnzbd_binary_path | {{ sabnzbd_user_home }}/bin/SABnzbd | path where the SABnzbd source will reside |
-| sabnzbd_ip | 0.0.0.0 | IP address the SABnzbd service will listen on |
-| sabnzbd_port | 8080 | tcp port the SABnzbd web interface will bind to |
-| sabnzbd_pid_file | {{ sabnzbd_conf_path }}/sabnzbd-{{ sabnzbd_port }}.pid | pidfile for the SABnzbd service to write the pid to |
-| sabnzbd_path_var | /opt/local/bin:/opt/local/sbin:/usr/bin:/bin | set $PATH for the SABnzbd service script |
-| sabnzbd_service_args | -f {{ sabnzbd_conf_path }}/settings.ini<br> -b 0 -d --pidfile {{ sabnzbd_pid_file }}<br> -s {{ sabnzbd_ip }}:{{ sabnzbd_port }} | arguments the SABnzbd service will use when starting |
-| sabnzbd_source_from_git | False | set to True to grab SABnzbd from Git, rather than a tarball from their site |
-| sabnzbd_follow_git | no | ensure SABnzbd source follows HEAD from Git |
-| sabnzbd_source_url | (link to SABnzbd source tarball, 0.7.20) | set the source URL for the SABnzbd tarball |
-| sabnzbd_source_sha256sum | SHA 256 hashsum of above tarball | set the SHA 256 hashsum to ensure the integrity of the source tarball |
+| `sabnzbd_user_name`  | sabnzbd | User to run the SABnzbd service |
+| `sabnzbd_group_name` | sabnzbd | Primary group of `sabnzbd_user_name` |
+| `sabnzbd_user_uid` | 1005 | UID of the SABnzbd service user |
+| `sabnzbd_group_gid` | 1005 | GID of the SABnzbd service group |
+| `sabnzbd_user_home` | /var/lib/{{ sabnzbd_user_name }} | home directory for the SABnzbd service user |
+| `sabnzbd_library_path` | {{ sabnzbd_user_home }}/data | root library path, to be used for download directories, etc. |
+| `sabnzbd_ip` | 0.0.0.0 | IP address the SABnzbd service will listen on |
+| `sabnzbd_port` | 8080 | TCP port the SABnzbd web interface will bind to |
+| `sabnzbd_clone_uri` | 'git://github.com/sabnzbd/sabnzbd' | The remote SABnzbd Git repo to clone |
+| `sabnzbd_follow_git` | false | Ensure SABnzbd source follows HEAD from Git |
+| `sabnzbd_dependencies` | - git-core | A list of dependency packages for SABnzbd |
+|                        |  - python-cheetah    |  |
+|                        |  - python-dbus       |  |
+|                        |  - python-openssl    |  |
+|                        |  - python-support    |  |
+|                        |  - python-yenc       |  |
+|                        |  - par2              |  |
+|                        |  - unrar-free        |  |
+|                        |  - unzip             |  |
+|                        |  - p7zip             |  |
+| `sabnzbd_service_file` |                      |  |
+| `    src`              | sabnzbd.service.j2   | The source template for the SABnzbd service manifest |
+| `    dest`             | /etc/systemd/system/sabnzbd.service | The destination to deploy the SABnzbd service manifest to |
+| `sabnzbd_service_reload_command` | systemctl daemon-reload | The command used to refresh the SABnzbd service manifest |
 
 Example Playbook
 ----------------

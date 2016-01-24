@@ -1,0 +1,14 @@
+[Unit]
+Description=SABnzbd Server
+After=network.target
+
+[Service]
+WorkingDirectory={{ sabnzbd_user_home }}
+ExecStart={{ sabnzbd_user_home }}/src/SABnzbd.py -f {{ sabnzbd_user_home }}/.sabnzbd/settings.ini -b 0 -s {{ sabnzbd_ip }}:{{ sabnzbd_port }} -d
+GuessMainPID=no
+Type=forking
+User={{ sabnzbd_user_name }}
+Group={{ sabnzbd_group_name }}
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,34 @@
+Vagrant.configure(2) do | config |
+  config.ssh.insert_key = false
+  config.ssh.username = 'vagrant'
+  config.vm.provider :virtualbox do |vb|
+    vb.customize ["modifyvm", :id, "--memory", "2048"]
+  end
+
+  # Debian 8
+  config.vm.define "debian8" do |sab|
+    sab.vm.hostname = "debian8.dev"
+    sab.vm.box = "debian/jessie64"
+    sab.vm.network :private_network, ip: "192.168.60.2"
+    sab.vm.network "forwarded_port", guest: 8080, host: 8181
+  end
+
+  # Ubuntu 15.04
+  config.vm.define "ubuntu15" do |sab|
+    sab.vm.hostname = "ubuntu15.dev"
+    sab.vm.box = "ubuntu/vivid64"
+    sab.vm.network :private_network, ip: "192.168.60.3"
+    sab.vm.network "forwarded_port", guest: 8080, host: 8282
+  end
+
+  # Ansible
+  config.vm.provision "ansible" do |ansible|
+    ansible.groups = {
+      "sab_servers" => ["debian8", "ubuntu15"],
+      "all_groups:children" => ["sab_servers"]
+    }
+
+    ansible.sudo = true
+    ansible.playbook = "provision.yml"
+  end
+end
