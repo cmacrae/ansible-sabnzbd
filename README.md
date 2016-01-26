@@ -2,11 +2,6 @@ SABnzbd
 =======
 This role deploys [SABnzbd](http://sabnzbd.org), an open source binary newsreader.
 
-Requirements
-------------
-This role has been written with [SmartOS](https://smartos.org) in mind, and is designed to be deployed to a [zone](https://wiki.smartos.org/display/DOC/Zones), for use as a server.
-However, if popular demand shows, I'll happily add in support for other operating systems.
-
 Role Variables
 --------------
 All variables have sensible defaults, which can be found in `defaults/main.yml`.
