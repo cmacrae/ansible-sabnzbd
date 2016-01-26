@@ -2,6 +2,10 @@ SABnzbd
 =======
 This role deploys [SABnzbd](http://sabnzbd.org), an open source binary newsreader.
 
+Requirements
+------------
+This role requires Ansible 2.0
+
 Role Variables
 --------------
 All variables have sensible defaults, which can be found in `defaults/main.yml`.
