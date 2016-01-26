@@ -6,6 +6,11 @@ Requirements
 ------------
 This role requires Ansible 2.0
 
+Supported Platforms
+-------------------
+- Ubuntu: 15.04
+- Debian: 8
+
 Role Variables
 --------------
 All variables have sensible defaults, which can be found in `defaults/main.yml`.
