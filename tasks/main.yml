@@ -19,6 +19,30 @@
   - name: Ensure SABnzbd dependencies are installed
     package: name={{ sabnzbd_dependencies }} state=present
 
+  - name: Fetch UnRAR source from RARLAB
+    get_url:
+      url: http://rarlab.com/rar/unrarsrc-5.2.7.tar.gz
+      dest: /root/
+      sha256sum: ef14757e943787b439fedf2c564c1f38d0db315528a928e0de170860717e2fac
+
+  - name: Ensure UnRAR source has been unarchived
+    unarchive:
+      src: /root/unrarsrc-5.2.7.tar.gz
+      dest: /root/
+      copy: false
+
+  - name: Ensure UnRAR has been built
+    shell: make -f makefile
+    args:
+      chdir: /root/unrar
+      creates: /root/unrar/unrar
+
+  - name: Ensure UnRAR has been installed
+    shell: make -f makefile install
+    args:
+      chdir: /root/unrar
+      creates: /usr/bin/unrar
+
   - name: Ensure SABnzbd source directory exists
     file:
       dest: "{{ sabnzbd_user_home }}/src"

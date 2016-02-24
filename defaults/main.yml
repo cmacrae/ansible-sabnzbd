@@ -6,15 +6,16 @@ sabnzbd_group_gid: 1005
 sabnzbd_user_home: /var/lib/{{ sabnzbd_user_name }}
 sabnzbd_dependencies:
   - git-core
+  - g++
+  - make
   - python-cheetah
   - python-dbus
   - python-openssl
   - python-support
   - python-yenc
   - par2
-  - unrar-free
+  - p7zip-full
   - unzip
-  - p7zip
 sabnzbd_clone_uri: 'git://github.com/sabnzbd/sabnzbd'
 sabnzbd_follow_git: false # Follow Git development? (true/false)
 sabnzbd_library_path: "{{ sabnzbd_user_home}}/data" # set this as the path in SABnzbd  for your downloads
