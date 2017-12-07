@@ -25,3 +25,4 @@ sabnzbd_service_file:
   src: sabnzbd.service.j2
   dest: /etc/systemd/system/sabnzbd.service
 sabnzbd_service_reload_command: systemctl daemon-reload
+sabnzbd_packer_provision: false

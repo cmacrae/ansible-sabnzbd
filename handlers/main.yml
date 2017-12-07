@@ -1,7 +1,10 @@
 ---
 
 - name: Restart SABnzbd service
-  service: name=sabnzbd state=restarted
+  service:
+    name: sabnzbd
+    state: restarted
+  when: not sabnzbd_packer_provision
 
 - name: Reload SABnzbd service config
   command: "{{ sabnzbd_service_reload_command }}"

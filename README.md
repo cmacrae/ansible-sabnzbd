@@ -42,6 +42,7 @@ The current version includes the following variables:
 | `    src`              | sabnzbd.service.j2   | The source template for the SABnzbd service manifest |
 | `    dest`             | /etc/systemd/system/sabnzbd.service | The destination to deploy the SABnzbd service manifest to |
 | `sabnzbd_service_reload_command` | systemctl daemon-reload | The command used to refresh the SABnzbd service manifest |
+| `sabnzbd_packer_provision` | false | Packer integration (don't start services when `true`) |
 
 Example Playbook
 ----------------

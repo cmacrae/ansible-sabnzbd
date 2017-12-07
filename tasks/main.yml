@@ -17,7 +17,14 @@
       state: present
 
   - name: Ensure SABnzbd dependencies are installed
-    package: name={{ sabnzbd_dependencies }} state=present
+    package:
+      name: "{{ sabnzbd_dependencies }}"
+      state: present
+
+  - name: Ensure SAByenc is installed
+    pip:
+      name: sabyenc
+      state: present
 
   - name: Fetch UnRAR source from RARLAB
     get_url:
@@ -80,5 +87,13 @@
 
   - meta: flush_handlers
 
-  - name: Ensure SABnzbd service is running and enabled on boot
-    service: name=sabnzbd state=started enabled=yes
+  - name: Ensure SABnzbd service is running
+    service:
+      name: sabnzbd
+      state: started
+    when: not sabnzbd_packer_provision
+
+  - name: Ensure SABnzbd service is enabled on boot
+    service:
+      name: sabnzbd
+      enabled: true
